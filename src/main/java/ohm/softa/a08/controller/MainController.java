@@ -2,6 +2,8 @@ package ohm.softa.a08.controller;
 
 import com.google.gson.Gson;
 import ohm.softa.a08.api.OpenMensaAPI;
+import ohm.softa.a08.filtering.MealsFilter;
+import ohm.softa.a08.filtering.MealsFilterFactory;
 import ohm.softa.a08.model.Meal;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -31,7 +33,7 @@ import java.util.stream.Collectors;
  *
  * @author Peter Kurfer
  */
-public class MainController implements Initializable {
+public class MainController extends MealsFilterFactory implements Initializable {
 
 	/**
 	 * Logger e.g. to debug multi-threading issues
@@ -103,14 +105,16 @@ public class MainController implements Initializable {
 	 */
 	@FXML
 	public void doGetMeals() {
-		api.getMeals(openMensaDateFormat.format(new Date())).enqueue(new Callback<>() {
+		//api.getMeals(openMensaDateFormat.format(new Date())).enqueue(new Callback<>() {
+		logger.info(String.format("Request Time: %s: ",new Date(2023-1900,4,8).toString()));
+		api.getMeals(openMensaDateFormat.format(new Date(2023-1900,4,8))).enqueue(new Callback<>() {
 			@Override
 			public void onResponse(Call<List<Meal>> call, Response<List<Meal>> response) {
 				logger.debug("Got response");
 
 				Platform.runLater(() -> {
 					if (!response.isSuccessful() || response.body() == null) {
-						logger.error(String.format("Got response with not successfull code %d", response.code()));
+						logger.error(String.format("Got response with not successful code %d", response.code()));
 
 							var alert = new Alert(Alert.AlertType.ERROR);
 							alert.setHeaderText("Unsuccessful HTTP call");
@@ -142,5 +146,14 @@ public class MainController implements Initializable {
 				});
 			}
 		});
+	}
+
+	@FXML
+	public void getFilterChoice(){
+		String value=filterChoiceBox.getValue();
+		logger.info(String.format("%s selected",value));
+		MealsFilter filter=getStrategy(value);
+
+		mealsListView.setItems((ObservableList<Meal>) filter.filter(meals));
 	}
 }

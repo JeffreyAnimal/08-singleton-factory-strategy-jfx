@@ -6,14 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryFilter extends FilterBase {
-	@Override
-	public List<Meal> filter(List<Meal> meals) {
-		List<Meal> filtered=new ArrayList<Meal>();
-		for(Meal m  :meals){
-			if(super.include(m))
-				filtered.add(m);
 
-		}
-		return filtered;
+	private String exclude;
+	public CategoryFilter(String exclude){
+		this.exclude=exclude;
+	}
+
+	@Override
+	protected Boolean include(Meal m) {
+		return !m.getCategory().toLowerCase()
+			.contains(exclude.toLowerCase());
 	}
 }

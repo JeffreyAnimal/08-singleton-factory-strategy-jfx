@@ -7,15 +7,16 @@ import java.util.List;
 
 public class NotesFilter extends FilterBase {
 
-	String reqNote;
-	NotesFilter(String reqNote){
-
+	String exclude;
+	NotesFilter(String exclude){
+		this.exclude=exclude;
 	}
-	@Override
-	public List<Meal> filter(List<Meal> meals) {
-		//TODO
-		List<Meal> filtered=new ArrayList<>();
-		return null;
 
+	@Override
+	protected Boolean include(Meal m) {
+		for(String note:m.getNotes())
+			if(note.toLowerCase().contains(exclude.toLowerCase()))
+				return false;
+		return true;
 	}
 }
