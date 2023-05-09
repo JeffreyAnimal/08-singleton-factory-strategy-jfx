@@ -1,2 +1,10 @@
-package ohm.softa.a08.filtering;public class FilterBase {
+package ohm.softa.a08.filtering;
+
+import ohm.softa.a08.model.Meal;
+
+public abstract class FilterBase implements MealsFilter {
+	protected Boolean include (Meal m){
+		//TODO
+		return null;
+	}
 }
